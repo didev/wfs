@@ -43,7 +43,7 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, rootHTML)
 		//main page
 		io.WriteString(w, "<center><br><br><br><t3>쉽게 서버를 탐색하세요!</t3><br><t4>여러분의 웹어플리케이션과 연결해서 사용자의 편의성을 높히세요.</t4><br>")
-		io.WriteString(w, `<br><br><br><a href="/show"><img src="http://10.0.90.193:8083/media/wfs_click.svg" width="100" height="70"></a></center>`)
+		io.WriteString(w, `<br><br><br><a href="/show"><img src="http://10.0.98.20:8083/media/wfs_click.svg" width="100" height="70"></a></center>`)
 	} else {
 		io.WriteString(w, headHTML)
 		if isPath(r.URL.Path) {
