@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	)
 
-const Templatepath = "http://10.0.90.193:8080/template/icon/"
+const Templatepath = "http://10.0.98.20:8080/template/icon/"
 
 func isPath(path string) bool {
 	if _, err := os.Stat(path); err == nil {
