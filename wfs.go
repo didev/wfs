@@ -87,9 +87,9 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path,"assets") && ispath(r.URL.Path) == false {
 				io.WriteString(w, "Create new nuke file.")
 				//make folder.
-				os.MkdirAll(r.URL.Path+"/wip", 0777)
-				os.Mkdir(r.URL.Path+"/src", 0777)
-				os.Mkdir(r.URL.Path+"/tmp", 0777)
+				os.MkdirAll(r.URL.Path+"/wip", 0744)
+				os.Mkdir(r.URL.Path+"/src", 0744)
+				os.Mkdir(r.URL.Path+"/tmp", 0744)
 				//make nukefile.
 				exec.Command("touch", r.URL.Path+"/"+gennk(r.URL.Path) ).Run()
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+gennk(r.URL.Path), gennk(r.URL.Path)))
