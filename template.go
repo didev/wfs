@@ -1,6 +1,5 @@
 package main
 
-
 const headHTML = `<!DOCTYPE html><head><title>WFS</title>
 	<meta charset="utf-8">
 	<style>
@@ -30,7 +29,6 @@ const headHTML = `<!DOCTYPE html><head><title>WFS</title>
 	</style>
 	<link rel="icon" type="image/png" href="http://10.0.90.193:8080/template/icon/wfs.png">
 	</head><body>`
-
 
 const rootHTML = `<!DOCTYPE html><head><title>WFS</title>
 	<meta charset="utf-8">

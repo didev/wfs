@@ -1,16 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
-	"net/http"
-	"strings"
 	"path/filepath"
-	)
+	"strings"
+)
 
 const Templatepath = "http://10.0.98.20:8080/template/icon/"
 
@@ -26,7 +26,7 @@ func parent_path(path string) string {
 	rpath := ""
 	strlist := strings.Split(path, "/")
 	for num, i := range strlist {
-		if num == len(strlist) - 1 {
+		if num == len(strlist)-1 {
 			break
 		} else {
 			rpath += i + "/"
@@ -35,9 +35,8 @@ func parent_path(path string) string {
 	return rpath[:len(rpath)-1]
 }
 
-
 func www_root(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html",)
+	w.Header().Set("Content-Type", "text/html")
 
 	if r.URL.Path == "/" {
 		io.WriteString(w, rootHTML)
@@ -48,8 +47,8 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, headHTML)
 		if isPath(r.URL.Path) {
 			// 상위경로가 존재한다면, .. 를 프린트하는 코드.
-			if len(strings.Split(r.URL.Path, "/")) > 2  {
-				io.WriteString(w, fmt.Sprintf(`<a href="%s">..</a><br>`, parent_path(r.URL.Path) ))
+			if len(strings.Split(r.URL.Path, "/")) > 2 {
+				io.WriteString(w, fmt.Sprintf(`<a href="%s">..</a><br>`, parent_path(r.URL.Path)))
 			}
 
 			files, _ := ioutil.ReadDir(r.URL.Path + "/")
@@ -57,45 +56,63 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				if strings.HasPrefix(f.Name(), ".") || strings.HasSuffix(f.Name(), "~") || strings.Contains(f.Name(), "autosave") || strings.HasSuffix(f.Name(), ".lnk") || strings.HasSuffix(f.Name(), ".mel") || strings.HasSuffix(f.Name(), ".tmp") {
 					continue
 				} else {
-					if f.IsDir() || strings.HasPrefix(f.Mode().String(), "L"){
-						io.WriteString(w, fmt.Sprintf(`<div><a href="dilink://%s"><img src="%s/folder.png"></a> <a href="%s">%s</a> </div>`, r.URL.Path+"/"+f.Name(), Templatepath, r.URL.Path+"/"+f.Name(), f.Name() ))
+					if f.IsDir() || strings.HasPrefix(f.Mode().String(), "L") {
+						io.WriteString(w, fmt.Sprintf(`<div><a href="dilink://%s"><img src="%s/folder.png"></a> <a href="%s">%s</a> </div>`, r.URL.Path+"/"+f.Name(), Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
 					} else {
 						switch filepath.Ext(f.Name()) {
-							case ".mov", ".mp4", ".avi", ".mkv" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/mov.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".rv" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/rv.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".nk" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".mb",".ma" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/maya.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".exr",".png",".jpg",".dpx",".tga" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/image.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".psd" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/psd.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".txt" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/text.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".py",".pyc" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/python.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".go" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/go.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".blend" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/blender.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".obj" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/obj.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".ntp" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/natron.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".3dl",".cube" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/lut.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".gz",".zip","bz2" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/zip.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".hip",".hipnc" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/houdini.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".ttf" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/ttf.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							case ".pdf" : io.WriteString(w, fmt.Sprintf(`<div><img src="%s/pdf.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
-							default: io.WriteString(w, fmt.Sprintf(`<div><img src="%s/file.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".mov", ".mp4", ".avi", ".mkv":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/mov.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".rv":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/rv.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".nk":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".mb", ".ma":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/maya.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".exr", ".png", ".jpg", ".dpx", ".tga":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/image.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".psd":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/psd.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".txt":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/text.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".py", ".pyc":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/python.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".go":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/go.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".blend":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/blender.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".obj":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/obj.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".ntp":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/natron.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".3dl", ".cube":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/lut.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".gz", ".zip", "bz2":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/zip.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".hip", ".hipnc":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/houdini.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".ttf":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/ttf.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						case ".pdf":
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/pdf.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
+						default:
+							io.WriteString(w, fmt.Sprintf(`<div><img src="%s/file.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+f.Name(), f.Name()))
 						}
 					}
 				}
 			}
 		} else {
-			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path,"assets") && ispath(r.URL.Path) == false {
+			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path, "assets") && ispath(r.URL.Path) == false {
 				io.WriteString(w, "Create new nuke file.")
 				//make folder.
 				os.MkdirAll(r.URL.Path+"/wip", 0774)
 				os.Mkdir(r.URL.Path+"/src", 0774)
 				os.Mkdir(r.URL.Path+"/tmp", 0774)
 				//make nukefile.
-				nkfile := r.URL.Path+"/"+gennk(r.URL.Path)
+				nkfile := r.URL.Path + "/" + gennk(r.URL.Path)
 				exec.Command("touch", nkfile).Run()
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+gennk(r.URL.Path), gennk(r.URL.Path)))
 			} else {
-				io.WriteString(w, "not exist path : " + r.URL.Path)
+				io.WriteString(w, "not exist path : "+r.URL.Path)
 			}
 		}
 	}
