@@ -105,7 +105,6 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				io.WriteString(w, "Create new nuke file.")
 				//make folder.
 				os.MkdirAll(r.URL.Path+"/wip", 0774)
-				os.Mkdir(r.URL.Path+"/src", 0774)
 				os.Mkdir(r.URL.Path+"/tmp", 0774)
 				//make nukefile.
 				nkfile := r.URL.Path + "/" + gennk(r.URL.Path)
