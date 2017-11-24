@@ -6,6 +6,10 @@
 alias wfsd='nohup su - idea -c "/lustre/INHouse/CentOS/bin/wfs -http=:8081 &"'
 ```
 
+#### 기본정보
+- 개발일시 : '15.6.10
+- 관리부서 : 파이프라인팀
+
 #### HISTORY
 - '15.8.10 ~ '15.8.17 : CSI와 함께 특허등록을 위한 문서작성.
 - '15.6.10 : 1차 개발완료. 목적 : 웹에서 스토리지의 파일 프리뷰 및 dilink 연동.

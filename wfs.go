@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -102,10 +101,21 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path, "assets") && ispath(r.URL.Path) == false {
-				io.WriteString(w, "Create new nuke file.")
-				//make nukefile.
+				// 뉴크파일이 위치할 폴더를 생성한다.
+				err := os.MkdirAll(r.URL.Path, 0774)
+				if err != nil {
+					io.WriteString(w, err.Error())
+					return
+				}
+				// 뉴크파일을 생성한다.
 				nkfile := r.URL.Path + "/" + gennk(r.URL.Path)
-				exec.Command("touch", nkfile).Run()
+				f, err := os.Create(nkfile)
+				if err != nil {
+					io.WriteString(w, err.Error())
+					return
+				}
+				defer f.Close()
+				io.WriteString(w, "Create new nuke file.")
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+gennk(r.URL.Path), gennk(r.URL.Path)))
 			} else {
 				io.WriteString(w, "not exist path : "+r.URL.Path)
