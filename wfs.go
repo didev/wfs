@@ -103,9 +103,6 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 		} else {
 			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path, "assets") && ispath(r.URL.Path) == false {
 				io.WriteString(w, "Create new nuke file.")
-				//make folder.
-				os.MkdirAll(r.URL.Path+"/wip", 0774)
-				os.Mkdir(r.URL.Path+"/tmp", 0774)
 				//make nukefile.
 				nkfile := r.URL.Path + "/" + gennk(r.URL.Path)
 				exec.Command("touch", nkfile).Run()
