@@ -102,7 +102,7 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 		} else {
 			if strings.HasPrefix(r.URL.Path, "/show") && strings.HasSuffix(r.URL.Path, "/comp/dev") && !strings.Contains(r.URL.Path, "assets") && ispath(r.URL.Path) == false {
 				// 뉴크파일이 위치할 폴더를 생성한다.
-				err := os.MkdirAll(r.URL.Path, 0774)
+				err := os.MkdirAll(r.URL.Path, 0775)
 				if err != nil {
 					io.WriteString(w, err.Error())
 					return
