@@ -87,15 +87,16 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				}
 				io.WriteString(w, "Create new nuke file.")
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+nkf, nkf))
-			} else if regexpOtherTask.MatchString(r.URL.Path) {
-				initNukefile(r.URL.Path)
+			} else if regexpFxTask.MatchString(r.URL.Path) {
+				nkpath := r.URL.Path + "/precomp"
+				initNukefile(nkpath)
 				nkf, err := nkfilename(r.URL.Path)
 				if err != nil {
 					io.WriteString(w, err.Error())
 					return
 				}
 				io.WriteString(w, "Create new nuke file.")
-				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+nkf, nkf))
+				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, nkpath+"/"+nkf, nkf))
 			} else {
 				io.WriteString(w, "경로가 존재하지 않습니다. : "+r.URL.Path)
 			}
