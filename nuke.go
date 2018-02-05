@@ -34,6 +34,10 @@ func initNukefile(path string) error {
 		return err
 	}
 	// Task하위의 특정 위치부터 Task폴더까지 권한이 idea:idea 775 형태가 되어야 한다.
+	// 예를 들면 아래 폴더 전부 최초 생성시 idea:idea 775 권한을 가져야 한다.
+	// /show/TEMP/seq/SS/SS_0010/fx/dev/precomp
+	// /show/TEMP/seq/SS/SS_0010/fx/dev
+	// /show/TEMP/seq/SS/SS_0010/fx
 	current := path
 	for i := 1; i <= 10; i++ {
 		_, err := dipath.Task(current)
@@ -53,6 +57,6 @@ func initNukefile(path string) error {
 		return err
 	}
 	defer f.Close()
-	dipath.Ideapath(nkf) // 권한설정 idea:idea 775
+	dipath.Ideapath(path + "/" + nkf) // 권한설정 idea:idea 775
 	return nil
 }
