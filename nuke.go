@@ -39,7 +39,7 @@ func initNukefile(path string) error {
 	// /show/TEMP/seq/SS/SS_0010/fx/dev
 	// /show/TEMP/seq/SS/SS_0010/fx
 	current := path
-	for i := 1; i <= 10; i++ {
+	for {
 		_, err := dipath.Task(current)
 		if err != nil {
 			break
