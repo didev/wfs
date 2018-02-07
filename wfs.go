@@ -79,24 +79,42 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			if regexpCompTask.MatchString(r.URL.Path) {
-				initNukefile(r.URL.Path)
-				nkf, err := nkfilename(r.URL.Path)
+				nkf, err := nkfilename(r.URL.Path, "")
 				if err != nil {
 					io.WriteString(w, err.Error())
 					return
 				}
+				initNukefile(r.URL.Path, nkf)
 				io.WriteString(w, "Create new nuke file.")
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+nkf, nkf))
 			} else if regexpFxTask.MatchString(r.URL.Path) {
-				nkpath := r.URL.Path + "/precomp"
-				initNukefile(nkpath)
-				nkf, err := nkfilename(r.URL.Path)
+				precompPath := r.URL.Path + "/precomp"
+				io.WriteString(w, "Create new nuke file.")
+				// 메인 합성파일을 생성한다.
+				nkf, err := nkfilename(r.URL.Path, "")
 				if err != nil {
 					io.WriteString(w, err.Error())
 					return
 				}
-				io.WriteString(w, "Create new nuke file.")
-				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, nkpath+"/"+nkf, nkf))
+				initNukefile(precompPath, nkf)
+				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, precompPath+"/"+nkf, nkf))
+				// element별 합성파일을 생성한다.
+				q := r.URL.Query()
+				elements := strings.Split(q.Get("elements"), ",")
+				for _, e := range elements {
+					if e == "" {
+						// 실제로 query에 elements를 선언하지 않더라도..
+						// elements값에는 빈문자열 1개가 들어온다.
+						continue
+					}
+					nkf, err := nkfilename(r.URL.Path, e)
+					if err != nil {
+						io.WriteString(w, err.Error())
+						return
+					}
+					initNukefile(precompPath, nkf)
+					io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, precompPath+"/"+nkf, nkf))
+				}
 			} else {
 				io.WriteString(w, "경로가 존재하지 않습니다. : "+r.URL.Path)
 			}

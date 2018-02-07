@@ -11,7 +11,8 @@ import (
 var regexpCompTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/comp/dev$`)
 var regexpFxTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/fx/dev$`)
 
-func nkfilename(path string) (string, error) {
+// nkfilename 함수는 경로, 앨레멘트 이름으로 뉴크파일명을 생성한다.
+func nkfilename(path string, element string) (string, error) {
 	seq, err := dipath.Seq(path)
 	if err != nil {
 		return "", err
@@ -24,10 +25,11 @@ func nkfilename(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%s_%s_%s_v01.nk", seq, shot, task), nil
+	return fmt.Sprintf("%s_%s_%s%s_v01.nk", seq, shot, task, element), nil
 }
 
-func initNukefile(path string) error {
+// initNukefile함수는 경로, 뉴크파일명으로 필요한 폴더, 파일을 생성한다.
+func initNukefile(path, nkfilename string) error {
 	// 폴더생성
 	err := os.MkdirAll(path, 0775)
 	if err != nil {
@@ -48,15 +50,11 @@ func initNukefile(path string) error {
 		current = filepath.Dir(current)
 	}
 	// 파일생성
-	nkf, err := nkfilename(path)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(path + "/" + nkf)
+	f, err := os.Create(path + "/" + nkfilename)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
-	dipath.Ideapath(path + "/" + nkf) // 권한설정 idea:idea 775
+	dipath.Ideapath(path + "/" + nkfilename) // 권한설정 idea:idea 775
 	return nil
 }
