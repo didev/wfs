@@ -25,7 +25,10 @@ func nkfilename(path string, element string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("%s_%s_%s%s_v01.nk", seq, shot, task, element), nil
+	if element != "" {
+		task += "_" + element
+	}
+	return fmt.Sprintf("%s_%s_%s_v01.nk", seq, shot, task), nil
 }
 
 // initNukefile함수는 경로, 뉴크파일명으로 필요한 폴더, 파일을 생성한다.
