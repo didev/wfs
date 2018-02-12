@@ -11,6 +11,7 @@ import (
 var regexpCompTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/comp/dev$`)
 var regexpFxTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/fx/dev$`)
 var regexpLightTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/light/dev$`)
+var regexpMatteTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/matte/dev$`)
 var regexpEnvTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/env/dev$`)
 
 // nkfilename 함수는 경로, 앨레멘트 이름으로 뉴크파일명을 생성한다.
