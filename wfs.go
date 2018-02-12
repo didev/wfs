@@ -97,6 +97,15 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				initNukefile(precompPath, nkf)
 				io.WriteString(w, "Create new nuke file.")
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, precompPath+"/"+nkf, nkf))
+			} else if regexpMatteTask.MatchString(r.URL.Path) {
+				err := mkdirs(r.URL.Path)
+				if err != nil {
+					io.WriteString(w, err.Error())
+					return
+				}
+				io.WriteString(w, "pub폴더가 생성되었습니다. F5를 눌러주세요.")
+				io.WriteString(w, "precomp컴프 필요시 pub/precomp/SS_0010_matte_v01.nk 파일형태로 수동 생성해주세요.")
+
 			} else if regexpFxTask.MatchString(r.URL.Path) {
 				precompPath := r.URL.Path + "/precomp"
 				io.WriteString(w, "Create new nuke file.")

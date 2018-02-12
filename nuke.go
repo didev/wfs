@@ -11,6 +11,7 @@ import (
 var regexpCompTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/comp/dev$`)
 var regexpFxTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/fx/dev$`)
 var regexpLightTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/light/dev$`)
+var regexpMatteTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/matte/pub$`)
 var regexpEnvTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/env/dev$`)
 
 // nkfilename 함수는 경로, 앨레멘트 이름으로 뉴크파일명을 생성한다.
@@ -33,9 +34,8 @@ func nkfilename(path string, element string) (string, error) {
 	return fmt.Sprintf("%s_%s_%s_v01.nk", seq, shot, task), nil
 }
 
-// initNukefile함수는 경로, 뉴크파일명으로 필요한 폴더, 파일을 생성한다.
-func initNukefile(path, nkfilename string) error {
-	// 폴더생성
+// mkdirs는 폴더를 생성하고 task이름까지 idea 권한으로 변경한다.
+func mkdirs(path string) error {
 	err := os.MkdirAll(path, 0775)
 	if err != nil {
 		return err
@@ -53,6 +53,15 @@ func initNukefile(path, nkfilename string) error {
 		}
 		dipath.Ideapath(current)
 		current = filepath.Dir(current)
+	}
+	return nil
+}
+
+// initNukefile함수는 경로, 뉴크파일명으로 필요한 폴더, 파일을 생성한다.
+func initNukefile(path, nkfilename string) error {
+	err := mkdirs(path)
+	if err != nil {
+		return err
 	}
 	// 파일생성
 	f, err := os.Create(path + "/" + nkfilename)
