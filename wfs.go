@@ -87,6 +87,16 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				initNukefile(r.URL.Path, nkf)
 				io.WriteString(w, "Create new nuke file.")
 				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, r.URL.Path+"/"+nkf, nkf))
+			} else if regexpLightTask.MatchString(r.URL.Path) || regexpEnvTask.MatchString(r.URL.Path) {
+				precompPath := r.URL.Path + "/precomp"
+				nkf, err := nkfilename(r.URL.Path, "")
+				if err != nil {
+					io.WriteString(w, err.Error())
+					return
+				}
+				initNukefile(precompPath, nkf)
+				io.WriteString(w, "Create new nuke file.")
+				io.WriteString(w, fmt.Sprintf(`<div><img src="%s/nk.png"> <a href="dilink://%s">%s</a></div>`, Templatepath, precompPath+"/"+nkf, nkf))
 			} else if regexpFxTask.MatchString(r.URL.Path) {
 				precompPath := r.URL.Path + "/precomp"
 				io.WriteString(w, "Create new nuke file.")
