@@ -104,6 +104,7 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				io.WriteString(w, "pub폴더가 생성되었습니다. F5를 눌러주세요.")
+				io.WriteString(w, "precomp컴프 필요시 pub/precomp/SS_0010_matte_v01.nk 파일형태로 수동 생성해주세요.")
 
 			} else if regexpFxTask.MatchString(r.URL.Path) {
 				precompPath := r.URL.Path + "/precomp"
