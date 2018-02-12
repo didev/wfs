@@ -78,7 +78,7 @@ func www_root(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else {
-			if regexpCompTask.MatchString(r.URL.Path) {
+			if regexpCompTask.MatchString(r.URL.Path) || regexpLightTask.MatchString(r.URL.Path) || regexpEnvTask.MatchString(r.URL.Path) {
 				nkf, err := nkfilename(r.URL.Path, "")
 				if err != nil {
 					io.WriteString(w, err.Error())
