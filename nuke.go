@@ -13,6 +13,7 @@ var regexpFxTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/fx/dev$`)
 var regexpLightTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/light/dev$`)
 var regexpMatteTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/matte/pub$`)
 var regexpEnvTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/env/dev$`)
+var regexpMgTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/mg/dev$`)
 
 // nkfilename 함수는 경로, 앨레멘트 이름으로 뉴크파일명을 생성한다.
 func nkfilename(path string, element string) (string, error) {
