@@ -1,7 +1,6 @@
 package main
 
 import (
-	"di/dipath"
 	"flag"
 	"fmt"
 	"io"
@@ -10,11 +9,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/didev/dipath"
 )
 
+// Templatepath 상수는 템플릿 아이콘이 있는 endpoint 입니다.
 const Templatepath = "http://10.0.98.20:8080/template/icon/"
 
-func www_root(w http.ResponseWriter, r *http.Request) {
+// Root 함수는 wfs "/"의 endpoint 함수입니다.
+func Root(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	if r.URL.Path == "/" {
 		io.WriteString(w, rootHTML)
@@ -132,6 +135,6 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	http.HandleFunc("/", www_root)
+	http.HandleFunc("/", Root)
 	http.ListenAndServe(*portPtr, nil)
 }

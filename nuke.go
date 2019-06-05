@@ -1,7 +1,7 @@
 package main
 
 import (
-	"di/dipath"
+	"github.com/didev/dipath"
 	"fmt"
 	"os"
 	"path/filepath"
