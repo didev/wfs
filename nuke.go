@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/didev/dipath"
 	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/digital-idea/dipath"
 )
 
 var regexpCompTask = regexp.MustCompile(`/show/\S+/seq/\S+/\S+/comp/dev$`)

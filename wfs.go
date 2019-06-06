@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/didev/dipath"
+	"github.com/digital-idea/dipath"
 )
 
 // Templatepath 상수는 템플릿 아이콘이 있는 endpoint 입니다.
