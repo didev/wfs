@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,11 +14,15 @@ import (
 	"github.com/digital-idea/dipath"
 )
 
+var (
+	flagHTTP = flag.String("http", "", "service port ex):8080")
+)
+
 // Templatepath 상수는 템플릿 아이콘이 있는 endpoint 입니다.
 const Templatepath = "http://10.0.98.20:8080/template/icon/"
 
-// Root 함수는 wfs "/"의 endpoint 함수입니다.
-func Root(w http.ResponseWriter, r *http.Request) {
+// Index 함수는 wfs "/"의 endpoint 함수입니다.
+func Index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	if r.URL.Path == "/" {
 		io.WriteString(w, rootHTML)
@@ -128,13 +133,14 @@ func Root(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	portPtr := flag.String("http", "", "service port ex):8080")
 	flag.Parse()
-	if *portPtr == "" {
-		fmt.Println("WFS is WebFileSystem for Digitalidea")
+	if *flagHTTP == "" {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	http.HandleFunc("/", Root)
-	http.ListenAndServe(*portPtr, nil)
+	http.HandleFunc("/", Index)
+	err := http.ListenAndServe(*flagHTTP, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
