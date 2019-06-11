@@ -17,10 +17,9 @@ import (
 var (
 	flagHTTP     = flag.String("http", "", "service port ex):8080")
 	flagRootPath = flag.String("rootpath", "/show", "wfs root path")
+	// Templatepath 상수는 템플릿 아이콘이 있는 endpoint 입니다.
+	Templatepath = "http://10.0.98.20:8080/template/icon/"
 )
-
-// Templatepath 상수는 템플릿 아이콘이 있는 endpoint 입니다.
-const Templatepath = "http://10.0.98.20:8080/template/icon/"
 
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
 func Index(w http.ResponseWriter, r *http.Request) {
