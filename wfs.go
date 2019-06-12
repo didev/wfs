@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	rice "github.com/GeertJohan/go.rice"
 	"github.com/digital-idea/dipath"
 )
 
@@ -25,10 +27,28 @@ var (
 func Index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	if r.URL.Path == "/" {
-		// index.html 템플릿 사용하기
-		io.WriteString(w, rootHTML)
-		io.WriteString(w, "<center><br><br><br><t3>쉽게 서버를 탐색하세요!</t3><br><t4>여러분의 웹어플리케이션과 연결해서 사용자의 편의성을 높히세요.</t4><br>")
-		io.WriteString(w, `<br><br><br><a href="`+*flagRootPath+`"><img src="http://10.0.98.20:8083/media/wfs_click.svg" width="100" height="70"></a></center>`)
+		// teamplate 로딩
+		templateBox, err := rice.FindBox("assets/template")
+		if err != nil {
+			log.Fatal(err)
+		}
+		// get file contents as string
+		templateString, err := templateBox.String("index.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		// parse and execute the template
+		tmpl, err := template.New("index").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		type recipe struct {
+			RootPath string
+		}
+		rcp := recipe{}
+		rcp.RootPath = *flagRootPath
+
+		tmpl.Execute(w, rcp)
 		return
 	}
 	// wfs.html 템플릿 사용하기
@@ -141,6 +161,8 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(assets)))
 	http.HandleFunc("/", Index)
 	err := http.ListenAndServe(*flagHTTP, nil)
 	if err != nil {
