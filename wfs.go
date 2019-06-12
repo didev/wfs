@@ -69,7 +69,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			}
 			if f.IsDir() || strings.HasPrefix(f.Mode().String(), "L") {
 				// 폴더의 경우
-				io.WriteString(w, fmt.Sprintf(`<div><a href="dilink://%s"><img src="/assets/img/folder.png"></a> <a href="%s">%s</a> </div>`, rcp.URLPath+"/"+f.Name(), rcp.URLPath+"/"+f.Name(), f.Name()))
+				io.WriteString(w, fmt.Sprintf(`<div><a href="dilink://%s"><img src="/assets/img/directory.png"></a> <a href="%s">%s</a> </div>`, rcp.URLPath+"/"+f.Name(), rcp.URLPath+"/"+f.Name(), f.Name()))
 			} else {
 				switch filepath.Ext(f.Name()) {
 				case ".mov", ".mp4", ".avi", ".mkv":
@@ -79,29 +79,29 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				case ".nk":
 					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".mb", ".ma":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/maya.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/mb.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".exr", ".png", ".jpg", ".dpx", ".tga":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/image.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/exr.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".psd":
 					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/psd.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".txt":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/text.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/txt.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".py", ".pyc":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/python.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/py.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".go":
 					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/go.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".blend":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/blender.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/blend.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".obj":
 					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/obj.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".ntp":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/natron.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/ntp.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".3dl", ".cube":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/lut.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/3dl.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".gz", ".zip", "bz2":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/zip.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/gz.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".hip", ".hipnc":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/houdini.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/hip.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".ttf":
 					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/ttf.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
 				case ".pdf":
