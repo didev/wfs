@@ -3,6 +3,12 @@ html, body {
     font-family: Courier, 'Courier New', Courier_New;
 }
 
+.icon {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
 footer {
     position:absolute;
     bottom:0;

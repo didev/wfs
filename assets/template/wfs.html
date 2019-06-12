@@ -8,6 +8,11 @@
 </head>
 <body class="bg-light">
 <div class="p-3">
+    {{if .Error}}
+    <div class="row pl-3">
+        {{.Error}}
+    </div>
+    {{end}}
     {{if .Parent}}
     <div class="row pl-3">
         <a href="{{.Parent}}" class="text-dark">..</a>
@@ -17,12 +22,12 @@
     {{range .Items}}
         {{if eq .Typ "directory"}}
         <div class="row pl-3">
-            <a href="dilink://{{.Path}}"><img src="/assets/img/{{.Typ}}.png"></a>&nbsp;
+            <a href="dilink://{{.Path}}"><img src="/assets/img/{{.Typ}}.png" class="icon"></a>&nbsp;
             <a href="{{.Path}}" class="text-dark">{{.Filename}}</a>
         </div>
         {{else}}
         <div class="row pl-3">
-            <img src="/assets/img/{{.Typ}}.png">&nbsp;<a href="dilink://{{.Path}}" class="text-dark">{{.Filename}}</a>
+            <img src="/assets/img/{{.Typ}}.png" class="icon">&nbsp;<a href="dilink://{{.Path}}" class="text-dark">{{.Filename}}</a>
         </div>
         {{end}}
     {{end}}

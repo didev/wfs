@@ -21,20 +21,22 @@ var (
 	flagRootPath = flag.String("rootpath", "/show", "wfs root path")
 )
 
+type item struct {
+	Typ      string
+	Path     string
+	Filename string
+}
+type recipe struct {
+	RootPath string
+	URLPath  string
+	Parent   string
+	Items    []item
+	Error    string
+}
+
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
 func Index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	type item struct {
-		Typ      string
-		Path     string
-		Filename string
-	}
-	type recipe struct {
-		RootPath string
-		URLPath  string
-		Parent   string
-		Items    []item
-	}
 	rcp := recipe{}
 	rcp.RootPath = *flagRootPath
 	rcp.URLPath = r.URL.Path
@@ -57,7 +59,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		index.Execute(w, rcp)
 		return
 	}
-
+	// wfs.html 템플릿 사용하기
+	templateString, err := templateBox.String("wfs.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	wfs, err := template.New("wfs").Parse(templateString)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if dipath.Exist(r.URL.Path) {
 		// 상위경로가 존재한다면, 부모경로를 추가한다.
 		if len(strings.Split(rcp.URLPath, "/")) > 2 {
@@ -66,6 +76,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// 폴더에 존재하는 파일을 불러온다.
 		files, err := ioutil.ReadDir(rcp.URLPath + "/")
 		if err != nil {
+			rcp.Error = err.Error()
 			log.Println(err)
 		}
 		for _, f := range files {
@@ -126,22 +137,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		// wfs.html 템플릿 사용하기
-		templateString, err := templateBox.String("wfs.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-		wfs, err := template.New("wfs").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
 		wfs.Execute(w, rcp)
 		return
 	}
 	if regexpCompTask.MatchString(r.URL.Path) {
 		nkf, err := nkfilename(r.URL.Path, "")
 		if err != nil {
-			io.WriteString(w, err.Error())
+			rcp.Error = err.Error()
+			log.Println(err)
+			wfs.Execute(w, rcp)
 			return
 		}
 		initNukefile(r.URL.Path, nkf)
@@ -154,7 +158,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		precompPath := r.URL.Path + "/precomp"
 		nkf, err := nkfilename(r.URL.Path, "")
 		if err != nil {
-			io.WriteString(w, err.Error())
+			rcp.Error = err.Error()
+			log.Println(err)
+			wfs.Execute(w, rcp)
 			return
 		}
 		initNukefile(precompPath, nkf)
@@ -166,7 +172,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	if regexpMatteTask.MatchString(r.URL.Path) {
 		err := mkdirs(r.URL.Path)
 		if err != nil {
-			io.WriteString(w, err.Error())
+			rcp.Error = err.Error()
+			log.Println(err)
+			wfs.Execute(w, rcp)
 			return
 		}
 		io.WriteString(w, "pub폴더가 생성되었습니다. F5를 눌러주세요.")
@@ -179,7 +187,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		// 메인 합성파일을 생성한다.
 		nkf, err := nkfilename(r.URL.Path, "master")
 		if err != nil {
-			io.WriteString(w, err.Error())
+			rcp.Error = err.Error()
+			log.Println(err)
+			wfs.Execute(w, rcp)
 			return
 		}
 		initNukefile(precompPath, nkf)
@@ -188,7 +198,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 경로가 존재하지 않는 경우
-	templateString, err := templateBox.String("nopath.html")
+	templateString, err = templateBox.String("nopath.html")
 	if err != nil {
 		log.Fatal(err)
 	}
