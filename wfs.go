@@ -51,8 +51,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		index.Execute(w, rcp)
 		return
 	}
-	// wfs.html 템플릿 사용하기
-	io.WriteString(w, headHTML)
+
 	if dipath.Exist(r.URL.Path) {
 		// 상위경로가 존재한다면, 부모경로를 추가한다.
 		if len(strings.Split(rcp.URLPath, "/")) > 2 {
@@ -111,6 +110,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+		// wfs.html 템플릿 사용하기
+		templateString, err := templateBox.String("wfs.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		wfs, err := template.New("wfs").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wfs.Execute(w, rcp)
 		return
 	}
 	if regexpCompTask.MatchString(r.URL.Path) {
