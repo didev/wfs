@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"log"
@@ -11,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
 
 	rice "github.com/GeertJohan/go.rice"
 	"github.com/digital-idea/dipath"
@@ -161,10 +161,14 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-
+	ip, err := serviceIP()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Web Server Start : http://%s%s\n", ip, *flagHTTP)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(assets)))
 	http.HandleFunc("/", Index)
-	err := http.ListenAndServe(*flagHTTP, nil)
+	err = http.ListenAndServe(*flagHTTP, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
