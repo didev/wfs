@@ -7,9 +7,9 @@ go run assets/asset_generate.go
 rice embed-go
 
 # OS별 필드
-GOOS=linux GOARCH=amd64 go build -o ./bin/linux/${APP} wfs.go nuke.go template.go
-GOOS=windows GOARCH=amd64 go build -o ./bin/windows/${APP}.exe wfs.go nuke.go template.go
-GOOS=darwin GOARCH=amd64 go build -o ./bin/darwin/${APP} wfs.go nuke.go template.go
+GOOS=linux GOARCH=amd64 go build -o ./bin/linux/${APP} wfs.go network.go nuke.go template.go assets_vfsdata.go rice-box.go
+GOOS=windows GOARCH=amd64 go build -o ./bin/windows/${APP}.exe wfs.go network.go nuke.go template.go assets_vfsdata.go rice-box.go
+GOOS=darwin GOARCH=amd64 go build -o ./bin/darwin/${APP} wfs.go network.go nuke.go template.go assets_vfsdata.go rice-box.go
 
 # Github Release에 업로드 하기위해 압축
 cd ./bin/linux/ && tar -zcvf ../${APP}_linux_x86-64.tgz . && cd -
