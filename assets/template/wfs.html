@@ -6,24 +6,33 @@
     <link rel="stylesheet" href="/assets/css/wfs.css">
 	<link rel="icon" type="image/png" href="/assets/img/wfs.png">
 </head>
-<body>
-{{if .Parent}}
-    <a href="{{.Parent}}">..</a><br>
-{{end}}
-
-{{range .Items}}
-    {{if eq .Typ "directory"}}
-    <div>
-        <a href="dilink://{{.Path}}">
-            <img src="/assets/img/{{.Typ}}.png">
-        </a> <a href="{{.Path}}">{{.Filename}}</a>
-    </div>
-    {{else}}
-    <div>
-        <img src="/assets/img/{{.Typ}}.png">
-        <a href="dilink://{{.Path}}">{{.Filename}}</a>
+<body class="bg-light">
+<div class="p-3">
+    {{if .Parent}}
+    <div class="row pl-3">
+        <a href="{{.Parent}}" class="text-dark">..</a>
     </div>
     {{end}}
-{{end}}
+
+    {{range .Items}}
+        {{if eq .Typ "directory"}}
+        <div class="row pl-3">
+            <a href="dilink://{{.Path}}"><img src="/assets/img/{{.Typ}}.png"></a>&nbsp;
+            <a href="{{.Path}}" class="text-dark">{{.Filename}}</a>
+        </div>
+        {{else}}
+        <div class="row pl-3">
+            <img src="/assets/img/{{.Typ}}.png">&nbsp;<a href="dilink://{{.Path}}" class="text-dark">{{.Filename}}</a>
+        </div>
+        {{end}}
+    {{end}}
+</div>
+
+<!-- Footer -->
+<footer class="page-footer bg-secondary">
+    <div class="footer-copyright text-center text-light align-middle">© 2019 Copyright
+        <a href="https://lazypic.org" class="text-light">Lazypic</a> & <a href="http://www.digitalidea.co.kr" class="text-light">Digitalidea</a>
+    </div>
+</footer>
 </body>
 </html>

@@ -11,21 +11,21 @@ func init() {
 	// define files
 	file2 := &embedded.EmbeddedFile{
 		Filename:    "index.html",
-		FileModTime: time.Unix(1560327294, 0),
+		FileModTime: time.Unix(1560332601, 0),
 
-		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n\t<meta charset=\"utf-8\">\n\t<link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body>\n<center><br><br><br><t3>쉽게 서버를 탐색하세요!</t3><br><t4>여러분의 웹어플리케이션과 연결해서 사용자의 편의성을 높히세요.</t4><br>\n<br><br><br><a href=\"{{.RootPath}}\"><img src=\"/assets/img/wfs_click.svg\" width=\"100\" height=\"70\"></a></center>"),
+		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n\t<meta charset=\"utf-8\">\n\t<link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body class=\"bg-light\">\n\n<div class=\"container p-5\">\n\t<div class=\"text-center\">\n\t\t웹브라우저에서 서버를 탐색하세요!<br>\n\t\tdilink로 웹어플리케이션과 연결해서<br>\n\t\t파일을 쉽게 열어보세요.\n\t</div>\n</div>\n\n<div class=\"container p-5\">\n\t<div class=\"text-center\">\n\t\t<a href=\"{{.RootPath}}\" class=\"btn btn-dark btn-lg\">{{.RootPath}}</a>\n\t</div>\n</div>\n\n<!-- Footer -->\n<footer class=\"page-footer bg-secondary\">\n\t<div class=\"footer-copyright text-center text-light align-middle\">© 2019 Copyright\n\t\t<a href=\"https://lazypic.org\" class=\"text-light\">Lazypic</a> & <a href=\"http://www.digitalidea.co.kr\" class=\"text-light\">Digitalidea</a>\n\t</div>\n</footer>\n</body>\n</html>\n\t"),
 	}
 	file3 := &embedded.EmbeddedFile{
 		Filename:    "nopath.html",
-		FileModTime: time.Unix(1560327474, 0),
+		FileModTime: time.Unix(1560332645, 0),
 
-		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body>\n    {{.URLPath}} 경로가 존재하지 않습니다.\n</body>\n</html>"),
+		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body class=\"bg-light\">\n\n\n<div class=\"container p-5\">\n    <div class=\"text-center\">\n        {{.URLPath}}<br>\n        경로가 존재하지 않습니다.\n    </div>\n</div>\n<!-- Footer -->\n<footer class=\"page-footer bg-secondary\">\n    <div class=\"footer-copyright text-center text-light align-middle\">© 2019 Copyright\n        <a href=\"https://lazypic.org\" class=\"text-light\">Lazypic</a> & <a href=\"http://www.digitalidea.co.kr\" class=\"text-light\">Digitalidea</a>\n    </div>\n</footer>\n</body>\n</html>"),
 	}
 	file4 := &embedded.EmbeddedFile{
 		Filename:    "wfs.html",
-		FileModTime: time.Unix(1560329199, 0),
+		FileModTime: time.Unix(1560332699, 0),
 
-		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body>\n{{if .Parent}}\n    <a href=\"{{.Parent}}\">..</a><br>\n{{end}}\n\n{{range .Items}}\n    {{if eq .Typ \"directory\"}}\n    <div>\n        <a href=\"dilink://{{.Path}}\">\n            <img src=\"/assets/img/{{.Typ}}.png\">\n        </a> <a href=\"{{.Path}}\">{{.Filename}}</a>\n    </div>\n    {{else}}\n    <div>\n        <img src=\"/assets/img/{{.Typ}}.png\">\n        <a href=\"dilink://{{.Path}}\">{{.Filename}}</a>\n    </div>\n    {{end}}\n{{end}}\n</body>\n</html>\n"),
+		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body class=\"bg-light\">\n<div class=\"p-3\">\n    {{if .Parent}}\n    <div class=\"row pl-3\">\n        <a href=\"{{.Parent}}\" class=\"text-dark\">..</a>\n    </div>\n    {{end}}\n\n    {{range .Items}}\n        {{if eq .Typ \"directory\"}}\n        <div class=\"row pl-3\">\n            <a href=\"dilink://{{.Path}}\"><img src=\"/assets/img/{{.Typ}}.png\"></a>&nbsp;\n            <a href=\"{{.Path}}\" class=\"text-dark\">{{.Filename}}</a>\n        </div>\n        {{else}}\n        <div class=\"row pl-3\">\n            <img src=\"/assets/img/{{.Typ}}.png\">&nbsp;<a href=\"dilink://{{.Path}}\" class=\"text-dark\">{{.Filename}}</a>\n        </div>\n        {{end}}\n    {{end}}\n</div>\n\n<!-- Footer -->\n<footer class=\"page-footer bg-secondary\">\n    <div class=\"footer-copyright text-center text-light align-middle\">© 2019 Copyright\n        <a href=\"https://lazypic.org\" class=\"text-light\">Lazypic</a> & <a href=\"http://www.digitalidea.co.kr\" class=\"text-light\">Digitalidea</a>\n    </div>\n</footer>\n</body>\n</html>\n"),
 	}
 
 	// define dirs
