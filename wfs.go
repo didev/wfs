@@ -24,10 +24,16 @@ var (
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
 func Index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
+	type item struct {
+		Typ      string
+		Path     string
+		Filename string
+	}
 	type recipe struct {
 		RootPath string
 		URLPath  string
 		Parent   string
+		Items    []item
 	}
 	rcp := recipe{}
 	rcp.RootPath = *flagRootPath
@@ -68,45 +74,55 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			}
 			if f.IsDir() || strings.HasPrefix(f.Mode().String(), "L") {
 				// 폴더의 경우
-				io.WriteString(w, fmt.Sprintf(`<div><a href="dilink://%s"><img src="/assets/img/directory.png"></a> <a href="%s">%s</a> </div>`, rcp.URLPath+"/"+f.Name(), rcp.URLPath+"/"+f.Name(), f.Name()))
+				i := item{}
+				i.Typ = "directory"
+				i.Path = rcp.URLPath + "/" + f.Name()
+				i.Filename = f.Name()
+				rcp.Items = append(rcp.Items, i)
 			} else {
 				switch filepath.Ext(f.Name()) {
-				case ".mov", ".mp4", ".avi", ".mkv":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/mov.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".rv":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/rv.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".nk":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".mb", ".ma":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/mb.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".exr", ".png", ".jpg", ".dpx", ".tga":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/exr.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".psd":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/psd.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".txt":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/txt.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".py", ".pyc":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/py.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".go":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/go.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".blend":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/blend.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".obj":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/obj.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".ntp":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/ntp.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".3dl", ".cube":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/3dl.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".gz", ".zip", "bz2":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/gz.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".hip", ".hipnc":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/hip.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".ttf":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/ttf.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
-				case ".pdf":
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/pdf.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+				case ".mov", ".mp4", ".avi", ".mkv", ".rv":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
+				case ".nk", ".nknc", ".ntp", ".mb", ".ma", ".blend", ".hip", ".hipnc":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
+				case ".exr", ".png", ".jpg", ".dpx", ".tga", ".psd":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
+				case ".txt", ".py", ".pyc", ".go":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
+				case ".obj", ".3dl", ".cube":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
+				case ".gz", ".zip", "bz2", ".ttf", ".pdf":
+					i := item{}
+					i.Typ = filepath.Ext(f.Name())[1:]
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
 				default:
-					io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/file.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+f.Name(), f.Name()))
+					i := item{}
+					i.Typ = "file"
+					i.Path = rcp.URLPath + "/" + f.Name()
+					i.Filename = f.Name()
+					rcp.Items = append(rcp.Items, i)
 				}
 			}
 		}

@@ -10,5 +10,20 @@
 {{if .Parent}}
     <a href="{{.Parent}}">..</a><br>
 {{end}}
+
+{{range .Items}}
+    {{if eq .Typ "directory"}}
+    <div>
+        <a href="dilink://{{.Path}}">
+            <img src="/assets/img/{{.Typ}}.png">
+        </a> <a href="{{.Path}}">{{.Filename}}</a>
+    </div>
+    {{else}}
+    <div>
+        <img src="/assets/img/{{.Typ}}.png">
+        <a href="dilink://{{.Path}}">{{.Filename}}</a>
+    </div>
+    {{end}}
+{{end}}
 </body>
 </html>

@@ -23,9 +23,9 @@ func init() {
 	}
 	file4 := &embedded.EmbeddedFile{
 		Filename:    "wfs.html",
-		FileModTime: time.Unix(1560327493, 0),
+		FileModTime: time.Unix(1560329199, 0),
 
-		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body>\n{{if .Parent}}\n    <a href=\"{{.Parent}}\">..</a><br>\n{{end}}\n</body>\n</html>\n"),
+		Content: string("<!DOCTYPE html>\n<head>\n    <title>WFS</title>\n    <meta charset=\"utf-8\">\n    <link rel=\"stylesheet\" href=\"/assets/bootstrap-4/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/assets/css/wfs.css\">\n\t<link rel=\"icon\" type=\"image/png\" href=\"/assets/img/wfs.png\">\n</head>\n<body>\n{{if .Parent}}\n    <a href=\"{{.Parent}}\">..</a><br>\n{{end}}\n\n{{range .Items}}\n    {{if eq .Typ \"directory\"}}\n    <div>\n        <a href=\"dilink://{{.Path}}\">\n            <img src=\"/assets/img/{{.Typ}}.png\">\n        </a> <a href=\"{{.Path}}\">{{.Filename}}</a>\n    </div>\n    {{else}}\n    <div>\n        <img src=\"/assets/img/{{.Typ}}.png\">\n        <a href=\"dilink://{{.Path}}\">{{.Filename}}</a>\n    </div>\n    {{end}}\n{{end}}\n</body>\n</html>\n"),
 	}
 
 	// define dirs
