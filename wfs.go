@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -32,6 +31,7 @@ type recipe struct {
 	Parent   string
 	Items    []item
 	Error    string
+	Nukefile string
 }
 
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
@@ -140,6 +140,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		wfs.Execute(w, rcp)
 		return
 	}
+	// 이미 폴더가 있다면 위쪽 조건에 의해서 파일을 브라우징한다.
+
+	// 합성팀 뉴크파일 생성
 	if regexpCompTask.MatchString(rcp.URLPath) {
 		nkf, err := nkfilename(rcp.URLPath, "")
 		if err != nil {
@@ -149,11 +152,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		initNukefile(rcp.URLPath, nkf)
-		io.WriteString(w, "Create new nuke file.")
-		io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+nkf, nkf))
+		rcp.Nukefile = nkf
+		templateString, err := templateBox.String("createNuke.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		createNuke, err := template.New("createNuke").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		createNuke.Execute(w, rcp)
 		return
 	}
-
+	// 라이팅팀, 환경팀, 모션그래픽 팀은 프리컴프 파일을 생성한다.
 	if regexpLightTask.MatchString(rcp.URLPath) || regexpEnvTask.MatchString(rcp.URLPath) || regexpMgTask.MatchString(rcp.URLPath) {
 		precompPath := rcp.URLPath + "/precomp"
 		nkf, err := nkfilename(rcp.URLPath, "")
@@ -164,12 +175,22 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		initNukefile(precompPath, nkf)
-		io.WriteString(w, "Create new nuke file.")
-		io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, precompPath+"/"+nkf, nkf))
+		templateString, err := templateBox.String("createNuke.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		createNuke, err := template.New("createNuke").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rcp.URLPath = precompPath
+		rcp.Nukefile = nkf
+		createNuke.Execute(w, rcp)
 		return
 	}
-
+	// 매트팀 프리컴프파일 메시지
 	if regexpMatteTask.MatchString(rcp.URLPath) {
+		// 매트팀은 폴더만 생성하길 요청함.
 		err := mkdirs(rcp.URLPath)
 		if err != nil {
 			rcp.Error = err.Error()
@@ -177,11 +198,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			wfs.Execute(w, rcp)
 			return
 		}
-		io.WriteString(w, "pub폴더가 생성되었습니다. F5를 눌러주세요.")
-		io.WriteString(w, "precomp컴프 필요시 pub/precomp/SS_0010_matte_v01.nk 파일형태로 수동 생성해주세요.")
+		templateString, err := templateBox.String("createMatte.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		createMatte, err := template.New("createMatte").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		createMatte.Execute(w, nil)
 		return
 	}
 
+	// FX팀 프리컴프파일 메시지
 	if regexpFxTask.MatchString(rcp.URLPath) {
 		precompPath := rcp.URLPath + "/precomp"
 		// 메인 합성파일을 생성한다.
@@ -193,8 +222,17 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		initNukefile(precompPath, nkf)
-		io.WriteString(w, "Create new nuke file.")
-		io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, precompPath+"/"+nkf, nkf))
+		templateString, err := templateBox.String("createNuke.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+		createNuke, err := template.New("createNuke").Parse(templateString)
+		if err != nil {
+			log.Fatal(err)
+		}
+		rcp.URLPath = precompPath
+		rcp.Nukefile = nkf
+		createNuke.Execute(w, rcp)
 		return
 	}
 	// 경로가 존재하지 않는 경우
