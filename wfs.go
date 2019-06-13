@@ -38,7 +38,7 @@ type recipe struct {
 func Index(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	rcp := recipe{}
-	rcp.RootPath = *flagRootPath
+	rcp.RootPath = Home2Abspath(*flagRootPath)
 	rcp.URLPath = r.URL.Path
 
 	// teamplate 로딩
