@@ -140,23 +140,23 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		wfs.Execute(w, rcp)
 		return
 	}
-	if regexpCompTask.MatchString(r.URL.Path) {
-		nkf, err := nkfilename(r.URL.Path, "")
+	if regexpCompTask.MatchString(rcp.URLPath) {
+		nkf, err := nkfilename(rcp.URLPath, "")
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
 			wfs.Execute(w, rcp)
 			return
 		}
-		initNukefile(r.URL.Path, nkf)
+		initNukefile(rcp.URLPath, nkf)
 		io.WriteString(w, "Create new nuke file.")
-		io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, r.URL.Path+"/"+nkf, nkf))
+		io.WriteString(w, fmt.Sprintf(`<div><img src="/assets/img/nk.png"> <a href="dilink://%s">%s</a></div>`, rcp.URLPath+"/"+nkf, nkf))
 		return
 	}
 
-	if regexpLightTask.MatchString(r.URL.Path) || regexpEnvTask.MatchString(r.URL.Path) || regexpMgTask.MatchString(r.URL.Path) {
-		precompPath := r.URL.Path + "/precomp"
-		nkf, err := nkfilename(r.URL.Path, "")
+	if regexpLightTask.MatchString(rcp.URLPath) || regexpEnvTask.MatchString(rcp.URLPath) || regexpMgTask.MatchString(rcp.URLPath) {
+		precompPath := rcp.URLPath + "/precomp"
+		nkf, err := nkfilename(rcp.URLPath, "")
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
@@ -169,8 +169,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if regexpMatteTask.MatchString(r.URL.Path) {
-		err := mkdirs(r.URL.Path)
+	if regexpMatteTask.MatchString(rcp.URLPath) {
+		err := mkdirs(rcp.URLPath)
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
@@ -182,10 +182,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if regexpFxTask.MatchString(r.URL.Path) {
-		precompPath := r.URL.Path + "/precomp"
+	if regexpFxTask.MatchString(rcp.URLPath) {
+		precompPath := rcp.URLPath + "/precomp"
 		// 메인 합성파일을 생성한다.
-		nkf, err := nkfilename(r.URL.Path, "master")
+		nkf, err := nkfilename(rcp.URLPath, "master")
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
