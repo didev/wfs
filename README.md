@@ -6,9 +6,9 @@
 필요시 작업에 필요한 뉴크파일을 초기 셋팅합니다.
 
 ### 다운로드
-- Linux: https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_linux_x86-64.tgz
-- MacOS: https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_darwin_x86-64.tgz
-- Windows: https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_windows_x86-64.tgz
+- [Linux 64bit](https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_linux_x86-64.tgz)
+- [MacOS 64bit](https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_darwin_x86-64.tgz)
+- [Windows 64bit](https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_windows_x86-64.tgz)
 
 ### 서버실행
 
