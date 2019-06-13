@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	flagHTTP     = flag.String("http", "", "service port ex):8080")
+	flagHTTP     = flag.String("http", "", "service port ex):8081")
 	flagRootPath = flag.String("rootpath", "/show", "wfs root path")
 )
 
