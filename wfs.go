@@ -3,16 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
-	"text/template"
 
-	rice "github.com/GeertJohan/go.rice"
 	"github.com/digital-idea/dipath"
+	"github.com/shurcooL/httpfs/html/vfstemplate"
 )
 
 var (
@@ -34,39 +34,34 @@ type recipe struct {
 	Nukefile string
 }
 
+// LoadTemplates 함수는 템플릿을 로딩합니다.
+func LoadTemplates() (*template.Template, error) {
+	t := template.New("")
+	t, err := vfstemplate.ParseGlob(assets, t, "/template/*.html")
+	return t, err
+}
+
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
 func Index(w http.ResponseWriter, r *http.Request) {
+	t, err := LoadTemplates()
+	if err != nil {
+		log.Println("loadTemplates:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "text/html")
 	rcp := recipe{}
 	rcp.RootPath = Home2Abspath(*flagRootPath)
 	rcp.URLPath = r.URL.Path
 
-	// teamplate 로딩
-	templateBox, err := rice.FindBox("assets/template")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	if rcp.URLPath == "/" {
-		templateString, err := templateBox.String("index.html")
+		err = t.ExecuteTemplate(w, "index", rcp)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		index, err := template.New("index").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
-		index.Execute(w, rcp)
 		return
-	}
-	// wfs.html 템플릿 사용하기
-	templateString, err := templateBox.String("wfs.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	wfs, err := template.New("wfs").Parse(templateString)
-	if err != nil {
-		log.Fatal(err)
 	}
 	if dipath.Exist(r.URL.Path) {
 		// 상위경로가 존재한다면, 부모경로를 추가한다.
@@ -137,7 +132,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		wfs.Execute(w, rcp)
+		err = t.ExecuteTemplate(w, "wfs", rcp)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 	// 이미 폴더가 있다면 위쪽 조건에 의해서 파일을 브라우징한다.
@@ -148,20 +148,23 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			wfs.Execute(w, rcp)
+			err = t.ExecuteTemplate(w, "wfs", rcp)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 		initNukefile(rcp.URLPath, nkf)
 		rcp.Nukefile = nkf
-		templateString, err := templateBox.String("createNuke.html")
+
+		err = t.ExecuteTemplate(w, "createNuke", rcp)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		createNuke, err := template.New("createNuke").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
-		createNuke.Execute(w, rcp)
 		return
 	}
 	// 라이팅팀, 환경팀, 모션그래픽 팀은 프리컴프 파일을 생성한다.
@@ -171,21 +174,23 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			wfs.Execute(w, rcp)
+			err = t.ExecuteTemplate(w, "wfs", rcp)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 		initNukefile(precompPath, nkf)
-		templateString, err := templateBox.String("createNuke.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-		createNuke, err := template.New("createNuke").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
 		rcp.URLPath = precompPath
 		rcp.Nukefile = nkf
-		createNuke.Execute(w, rcp)
+		err = t.ExecuteTemplate(w, "createNuke", rcp)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 	// 매트팀 프리컴프파일 메시지
@@ -195,18 +200,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			wfs.Execute(w, rcp)
+			err = t.ExecuteTemplate(w, "wfs", rcp)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
-		templateString, err := templateBox.String("createMatte.html")
+		err = t.ExecuteTemplate(w, "createMatte", rcp)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		createMatte, err := template.New("createMatte").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
-		createMatte.Execute(w, nil)
 		return
 	}
 
@@ -218,33 +225,33 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			wfs.Execute(w, rcp)
+			err = t.ExecuteTemplate(w, "wfs", rcp)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 		initNukefile(precompPath, nkf)
-		templateString, err := templateBox.String("createNuke.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-		createNuke, err := template.New("createNuke").Parse(templateString)
-		if err != nil {
-			log.Fatal(err)
-		}
 		rcp.URLPath = precompPath
 		rcp.Nukefile = nkf
-		createNuke.Execute(w, rcp)
+		err = t.ExecuteTemplate(w, "createNuke", rcp)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 	// 경로가 존재하지 않는 경우
-	templateString, err = templateBox.String("nopath.html")
+	err = t.ExecuteTemplate(w, "nopath", rcp)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	nopath, err := template.New("nopath").Parse(templateString)
-	if err != nil {
-		log.Fatal(err)
-	}
-	nopath.Execute(w, rcp)
+	return
 }
 
 func main() {
