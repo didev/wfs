@@ -63,6 +63,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	if !strings.HasPrefix(rcp.URLPath, *flagRootPath) {
+		err = t.ExecuteTemplate(w, "nopath.html", rcp)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		return
+	}
 	if dipath.Exist(r.URL.Path) {
 		// 상위경로가 존재한다면, 부모경로를 추가한다.
 		if len(strings.Split(rcp.URLPath, "/")) > 2 {
