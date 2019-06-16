@@ -55,7 +55,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	rcp.URLPath = r.URL.Path
 
 	if rcp.URLPath == "/" {
-		err = t.ExecuteTemplate(w, "index", rcp)
+		err = t.ExecuteTemplate(w, "index.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -132,7 +132,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		err = t.ExecuteTemplate(w, "wfs", rcp)
+		err = t.ExecuteTemplate(w, "wfs.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -148,7 +148,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			err = t.ExecuteTemplate(w, "wfs", rcp)
+			err = t.ExecuteTemplate(w, "wfs.html", rcp)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -159,7 +159,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		initNukefile(rcp.URLPath, nkf)
 		rcp.Nukefile = nkf
 
-		err = t.ExecuteTemplate(w, "createNuke", rcp)
+		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -185,7 +185,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		initNukefile(precompPath, nkf)
 		rcp.URLPath = precompPath
 		rcp.Nukefile = nkf
-		err = t.ExecuteTemplate(w, "createNuke", rcp)
+		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -200,7 +200,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			err = t.ExecuteTemplate(w, "wfs", rcp)
+			err = t.ExecuteTemplate(w, "wfs.html", rcp)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -208,7 +208,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-		err = t.ExecuteTemplate(w, "createMatte", rcp)
+		err = t.ExecuteTemplate(w, "createMatte.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -225,7 +225,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			rcp.Error = err.Error()
 			log.Println(err)
-			err = t.ExecuteTemplate(w, "wfs", rcp)
+			err = t.ExecuteTemplate(w, "wfs.html", rcp)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -236,7 +236,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		initNukefile(precompPath, nkf)
 		rcp.URLPath = precompPath
 		rcp.Nukefile = nkf
-		err = t.ExecuteTemplate(w, "createNuke", rcp)
+		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -245,7 +245,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 경로가 존재하지 않는 경우
-	err = t.ExecuteTemplate(w, "nopath", rcp)
+	err = t.ExecuteTemplate(w, "nopath.html", rcp)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
