@@ -2,8 +2,10 @@
 
 ![travisCI](https://secure.travis-ci.org/digital-idea/wfs.png)
 
-웹을 통해서 서버의 파일을 브라우징합니다.
-필요시 작업에 필요한 뉴크파일을 초기 셋팅합니다.
+주요기능: 웹을 통해서 서버의 파일을 브라우징합니다.
+
+부가기능:
+- 필요시 작업에 필요한 샷 뉴크파일 생성, 초기 셋팅
 
 ### 다운로드
 - [Linux 64bit](https://github.com/digital-idea/wfs/releases/download/v1.0/wfs_linux_x86-64.tgz)
