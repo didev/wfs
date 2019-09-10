@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 
@@ -25,6 +26,26 @@ type item struct {
 	Path     string
 	Filename string
 }
+
+func (i *item) SupportIcon() {
+	switch i.Typ {
+	case ".mov", ".mp4", ".avi", ".mkv", ".rv":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	case ".nk", ".nknc", ".ntp", ".mb", ".ma", ".blend", ".hip", ".hipnc":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	case ".exr", ".png", ".jpg", ".dpx", ".tga", ".psd":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	case ".txt", ".py", ".pyc", ".go":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	case ".obj", ".3dl", ".cube":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	case ".gz", ".zip", "bz2", ".ttf", ".pdf":
+		i.Typ = strings.TrimPrefix(i.Typ, ".")
+	default:
+		i.Typ = "file"
+	}
+}
+
 type recipe struct {
 	RootPath string
 	URLPath  string
@@ -43,6 +64,11 @@ func LoadTemplates() (*template.Template, error) {
 
 // Index 함수는 wfs "/"의 endpoint 함수입니다.
 func Index(w http.ResponseWriter, r *http.Request) {
+	user, err := user.Current()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	t, err := LoadTemplates()
 	if err != nil {
 		log.Println("loadTemplates:", err)
@@ -95,50 +121,17 @@ func Index(w http.ResponseWriter, r *http.Request) {
 				i.Filename = f.Name()
 				rcp.Items = append(rcp.Items, i)
 			} else {
-				switch filepath.Ext(f.Name()) {
-				case ".mov", ".mp4", ".avi", ".mkv", ".rv":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				case ".nk", ".nknc", ".ntp", ".mb", ".ma", ".blend", ".hip", ".hipnc":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				case ".exr", ".png", ".jpg", ".dpx", ".tga", ".psd":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				case ".txt", ".py", ".pyc", ".go":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				case ".obj", ".3dl", ".cube":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				case ".gz", ".zip", "bz2", ".ttf", ".pdf":
-					i := item{}
-					i.Typ = filepath.Ext(f.Name())[1:]
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
-				default:
-					i := item{}
-					i.Typ = "file"
-					i.Path = rcp.URLPath + "/" + f.Name()
-					i.Filename = f.Name()
-					rcp.Items = append(rcp.Items, i)
+				i := item{}
+				i.Typ = filepath.Ext(f.Name())
+				i.SupportIcon()
+				i.Path = rcp.URLPath + "/" + f.Name()
+				i.Path = rcp.URLPath + "/" + f.Name()
+				// 경로의 시작이 $HOME 과 같다면 ~문자로 치환한다.
+				if strings.HasPrefix(i.Path, user.HomeDir) {
+					i.Path = strings.Replace(i.Path, user.HomeDir, "~", 1)
 				}
+				i.Filename = f.Name()
+				rcp.Items = append(rcp.Items, i)
 			}
 		}
 		err = t.ExecuteTemplate(w, "wfs.html", rcp)
