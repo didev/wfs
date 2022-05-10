@@ -71,7 +71,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}
 	t, err := LoadTemplates()
 	if err != nil {
-		log.Println("loadTemplates:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -92,7 +91,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasPrefix(rcp.URLPath, *flagRootPath) {
 		err = t.ExecuteTemplate(w, "nopath.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -107,7 +105,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		files, err := ioutil.ReadDir(rcp.URLPath + "/")
 		if err != nil {
 			rcp.Error = err.Error()
-			log.Println(err)
 		}
 		for _, f := range files {
 			if strings.HasPrefix(f.Name(), ".") || strings.HasSuffix(f.Name(), "~") || strings.Contains(f.Name(), "autosave") || strings.HasSuffix(f.Name(), ".lnk") || strings.HasSuffix(f.Name(), ".mel") || strings.HasSuffix(f.Name(), ".tmp") {
@@ -136,7 +133,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		}
 		err = t.ExecuteTemplate(w, "wfs.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -149,10 +145,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		nkf, err := nkfilename(rcp.URLPath, "")
 		if err != nil {
 			rcp.Error = err.Error()
-			log.Println(err)
 			err = t.ExecuteTemplate(w, "wfs.html", rcp)
 			if err != nil {
-				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -163,7 +157,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -175,10 +168,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		nkf, err := nkfilename(rcp.URLPath, "")
 		if err != nil {
 			rcp.Error = err.Error()
-			log.Println(err)
 			err = t.ExecuteTemplate(w, "wfs", rcp)
 			if err != nil {
-				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -189,7 +180,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		rcp.Nukefile = nkf
 		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -201,10 +191,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		err := mkdirs(rcp.URLPath)
 		if err != nil {
 			rcp.Error = err.Error()
-			log.Println(err)
 			err = t.ExecuteTemplate(w, "wfs.html", rcp)
 			if err != nil {
-				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -212,48 +200,18 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		}
 		err = t.ExecuteTemplate(w, "createMatte.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		return
 	}
 
-	// FX팀 프리컴프파일 메시지
-	if regexpFxTask.MatchString(rcp.URLPath) {
-		precompPath := rcp.URLPath + "/precomp"
-		// 메인 합성파일을 생성한다.
-		nkf, err := nkfilename(rcp.URLPath, "master")
-		if err != nil {
-			rcp.Error = err.Error()
-			log.Println(err)
-			err = t.ExecuteTemplate(w, "wfs.html", rcp)
-			if err != nil {
-				log.Println(err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			return
-		}
-		initNukefile(precompPath, nkf)
-		rcp.URLPath = precompPath
-		rcp.Nukefile = nkf
-		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
-		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		return
-	}
 	// 경로가 존재하지 않는 경우
 	err = t.ExecuteTemplate(w, "nopath.html", rcp)
 	if err != nil {
-		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	return
 }
 
 func main() {
