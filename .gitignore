@@ -2,3 +2,4 @@
 /bin
 nohup.out
 *.swp
+assets_vfsdata.go
