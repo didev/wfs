@@ -76,13 +76,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html")
 	rcp := recipe{}
-	rcp.RootPath = Home2Abspath(*flagRootPath)
+	rcp.RootPath, err = Home2Abspath(*flagRootPath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	rcp.URLPath = r.URL.Path
 
 	if rcp.URLPath == "/" {
 		err = t.ExecuteTemplate(w, "index.html", rcp)
 		if err != nil {
-			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -229,6 +232,6 @@ func main() {
 	http.HandleFunc("/", Index)
 	err = http.ListenAndServe(*flagHTTP, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
