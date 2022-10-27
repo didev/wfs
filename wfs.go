@@ -18,6 +18,7 @@ import (
 
 var (
 	flagHTTP     = flag.String("http", "", "service port ex):8081")
+	flagProtocol = flag.String("protocol", "dilink", "protocol name")
 	flagRootPath = flag.String("rootpath", "/show", "wfs root path")
 )
 
@@ -53,6 +54,7 @@ type recipe struct {
 	Items    []item
 	Error    string
 	Nukefile string
+	Protocol string
 }
 
 // LoadTemplates 함수는 템플릿을 로딩합니다.
@@ -82,6 +84,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rcp.URLPath = r.URL.Path
+	rcp.Protocol = *flagProtocol
 
 	if rcp.URLPath == "/" {
 		err = t.ExecuteTemplate(w, "index.html", rcp)
@@ -181,6 +184,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		initNukefile(precompPath, nkf)
 		rcp.URLPath = precompPath
 		rcp.Nukefile = nkf
+		rcp.Protocol = *flagProtocol
 		err = t.ExecuteTemplate(w, "createNuke.html", rcp)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

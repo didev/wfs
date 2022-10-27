@@ -22,12 +22,12 @@
     {{range .Items}}
         {{if eq .Typ "directory"}}
         <div class="row pl-3">
-            <a href="dilink://{{.Path}}"><img src="/assets/img/{{.Typ}}.png" class="icon"></a>&nbsp;
+            <a href="{{$.Protocol}}://{{.Path}}"><img src="/assets/img/{{.Typ}}.png" class="icon"></a>&nbsp;
             <a href="{{.Path}}" class="text-dark">{{.Filename}}</a>
         </div>
         {{else}}
         <div class="row pl-3">
-            <img src="/assets/img/{{.Typ}}.png" class="appicon">&nbsp;<a href="dilink://{{.Path}}" class="text-dark align-top">{{.Filename}}</a>
+            <img src="/assets/img/{{.Typ}}.png" class="appicon">&nbsp;<a href="{{$.Protocol}}://{{.Path}}" class="text-dark align-top">{{.Filename}}</a>
         </div>
         {{end}}
     {{end}}
