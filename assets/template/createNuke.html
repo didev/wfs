@@ -12,16 +12,12 @@
 <div class="container p-5">
     <div class="text-center">
         Create new nuke file.<br>
-        <img src="/assets/img/nk.png"> <a href="dilink://{{.URLPath}}/{{.Nukefile}}">{{.Nukefile}}</a>
+        <img src="/assets/img/nk.png"> <a href="{{.Protocol}}://{{.URLPath}}/{{.Nukefile}}">{{.Nukefile}}</a>
     </div>
 </div>
 
 
-<!-- Footer -->
-<footer class="page-footer bg-secondary">
-    <div class="footer-copyright text-center text-light align-middle">© 2019 Copyright
-        <a href="https://lazypic.org" class="text-light">Lazypic</a> & <a href="http://www.digitalidea.co.kr" class="text-light">Digitalidea</a>
-    </div>
-</footer>
+{{template "footer"}}
+
 </body>
 </html>
